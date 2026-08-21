@@ -46,7 +46,18 @@ content:
       textAlignment: left
     content:
     - type: text
-      text: Корректно и без прерываний закончить ввод можно с помощью Ctrl + D
+      text: Корректно и без прерываний закончить ввод можно с помощью Ctrl + D.
+      styles: {}
+    children: []
+  - id: 23220229-8612-49d4-b3a0-87ea4559d6b8
+    type: bulletListItem
+    props:
+      backgroundColor: default
+      textColor: default
+      textAlignment: left
+    content:
+    - type: text
+      text: В строку ввода вставить приватный ключ нужно
       styles: {}
     children: []
 - id: 79a8bdd3-9b29-40ba-ba1c-e3bac195f3ff
