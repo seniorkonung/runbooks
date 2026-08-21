@@ -24,6 +24,173 @@ content:
     hostname: 151.242.191.59
     port: 0
   children: []
+- id: d694d7ce-d6cd-447b-92f6-7b9f8105091c
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: Github App
+    styles: {}
+  children: []
+- id: af7e0698-ad6a-4dd4-97ce-7d48436c9fb9
+  type: env
+  props:
+    name: GITHUB_APP_CLIENT_ID
+    value: Iv23liWkORQzsiCq7f9s
+  children: []
+- id: fc686b3e-6177-4b53-8356-79ca8cf5f61d
+  type: run
+  props:
+    type: bash
+    name: Получение PEM Private Key
+    code: |-
+      mkdir -p /root/.config/github-app \
+        && cat > /root/.config/github-app/private-key.pem \
+        && chmod 600 /root/.config/github-app/private-key.pem
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children:
+  - id: e9988c52-534e-4666-8883-2a630e5eeae8
+    type: bulletListItem
+    props:
+      backgroundColor: default
+      textColor: default
+      textAlignment: left
+    content:
+    - type: text
+      text: Корректно и без прерываний закончить ввод можно с помощью Ctrl + D.
+      styles: {}
+    children: []
+  - id: da91c3a9-ce7a-4d71-93a2-7b7105c21236
+    type: bulletListItem
+    props:
+      backgroundColor: default
+      textColor: default
+      textAlignment: left
+    content:
+    - type: text
+      text: В строку ввода вставить приватный ключ нужно
+      styles: {}
+    children: []
+- id: 656e666b-561f-4b15-b109-e0e0f59c34be
+  type: script
+  props:
+    interpreter: bash
+    outputVariable: ''
+    name: Установить зависимости и настроить git на обновление credentials
+    code: |-
+      apt-get update -y
+      apt-get install -y curl jq openssl
+
+      cat > /usr/local/bin/git-credential-github-app <<'EOF'
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      CLIENT_ID="{{ env.GITHUB_APP_CLIENT_ID }}"
+      PRIVATE_KEY="/root/.config/github-app/private-key.pem"
+
+      ACTION="${1:-get}"
+
+      # Git может вызывать helper с get/store/erase.
+      # Нам нужен только get.
+      if [[ "$ACTION" != "get" ]]; then
+          exit 0
+      fi
+
+      protocol=""
+      host=""
+      path=""
+
+      while IFS='=' read -r key value; do
+          case "$key" in
+              protocol) protocol="$value" ;;
+              host)     host="$value" ;;
+              path)     path="$value" ;;
+          esac
+      done
+
+      if [[ "$host" != "github.com" ]]; then
+          exit 0
+      fi
+
+      repo_path="${path%.git}"
+      owner="${repo_path%%/*}"
+      repo="${repo_path#*/}"
+
+      if [[ -z "$owner" || -z "$repo" || "$owner" == "$repo" ]]; then
+          echo "GitHub App credential helper: cannot determine repository from '$path'" >&2
+          exit 1
+      fi
+
+      b64url() {
+          openssl base64 -A | tr '+/' '-_' | tr -d '='
+      }
+
+      now=$(date +%s)
+      iat=$((now - 60))
+      exp=$((now + 540))
+
+      header=$(
+          printf '%s' '{"alg":"RS256","typ":"JWT"}' | b64url
+      )
+
+      payload=$(
+          printf '{"iat":%d,"exp":%d,"iss":"%s"}' \
+              "$iat" "$exp" "$CLIENT_ID" | b64url
+      )
+
+      unsigned="${header}.${payload}"
+
+      signature=$(
+          printf '%s' "$unsigned" \
+          | openssl dgst -sha256 -sign "$PRIVATE_KEY" \
+          | b64url
+      )
+
+      jwt="${unsigned}.${signature}"
+
+      installation_id=$(
+          curl -fsS \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $jwt" \
+              -H "X-GitHub-Api-Version: 2026-03-10" \
+              "https://api.github.com/repos/${owner}/${repo}/installation" \
+          | jq -r '.id'
+      )
+
+      token=$(
+          curl -fsS \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $jwt" \
+              -H "X-GitHub-Api-Version: 2026-03-10" \
+              "https://api.github.com/app/installations/${installation_id}/access_tokens" \
+          | jq -r '.token'
+      )
+
+      printf 'username=x-access-token\n'
+      printf 'password=%s\n\n' "$token"
+      EOF
+
+      chmod 755 /usr/local/bin/git-credential-github-app
+
+      git config --global credential.https://github.com.useHttpPath true
+      git config --global credential.https://github.com.helper github-app
+
+      git config --global user.name "senior-chicken[bot]"
+      git config --global user.email "319589311+senior-chicken[bot]@users.noreply.github.com"
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
 - id: b2763fbe-b13c-4941-8936-a55d87f9b72c
   type: heading
   props:
@@ -43,7 +210,9 @@ content:
     interpreter: bash
     outputVariable: ''
     name: Скачать и установить mise
-    code: curl https://mise.run | sh
+    code: |-
+      curl https://mise.run | sh
+      ln -s ~/.local/bin/mise /usr/local/bin
     outputVisible: true
     dependency: '{}'
     terminalRows: 12
@@ -81,11 +250,11 @@ content:
     outputVariable: ''
     name: Установка всех зависимостей поочерёдная
     code: |-
-      export PATH="/root/.local/bin:$PATH"
       mise use -g rust codex cloudflared
       mise use -g cargo:codex-asr
       mise use -g node
       mise use -g npm:@getpaseo/cli
+      mise use -g github:zeroclaw-labs/zeroclaw
     outputVisible: true
     dependency: '{}'
     terminalRows: 16
@@ -337,6 +506,70 @@ content:
     outputVisible: true
     dependency: '{}'
     terminalRows: 12
+  children: []
+- id: 3cee81fb-315d-43ee-b79c-021ba599dd1c
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: Zeroclaw
+    styles: {}
+  children: []
+- id: c2bb58a6-4d81-45cf-a5f6-74b9ba3326c4
+  type: env
+  props:
+    name: ZEROCLAW_CONFIG_DIR
+    value: /root/projects/zeroclaw-home
+  children: []
+- id: 4d7b1f41-b5ab-4984-85af-364fb0c6dc1a
+  type: script
+  props:
+    interpreter: bash
+    outputVariable: ''
+    name: Клонировать домашнюю папку zeroclaw
+    code: |-
+      mkdir -p ~/projects
+      cd projects
+      [ -d {{ env.ZEROCLAW_CONFIG_DIR }}/.git ] || git clone https://github.com/seniorkonung/zeroclaw-home.git
+
+      mise exec -- zeroclaw auth login --model-provider openai-codex --import ~/.codex/auth.json --config-dir $ZEROCLAW_CONFIG_DIR
+
+      cat > /etc/systemd/system/zeroclaw.service <<'EOF'
+      [Unit]
+      Description=Zeroclaw Daemon
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=simple
+      User=root
+      EnvironmentFile=/root/.config/paseo/credentials.env
+      ExecStart=/root/.local/bin/mise exec -- zeroclaw --config-dir {{ env.ZEROCLAW_CONFIG_DIR }} daemon
+      Restart=always
+      RestartSec=5
+
+      [Install]
+      WantedBy=default.target
+      EOF
+
+      systemctl daemon-reload
+      systemctl enable --now zeroclaw.service
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 01774650-8c1f-438a-8a08-7063b88f447e
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
   children: []
 - id: cd946e10-45bb-4748-b58e-330758fb9e65
   type: paragraph
