@@ -1,0 +1,46 @@
+id: 01a024ef-7ddd-78d0-9c48-5b39fa37916e
+name: Раскладка клавиатуры
+version: 1
+forkedFrom: null
+content:
+- id: bb4c0d4d-7e81-4bc3-8c52-0afe1644283c
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Раскладка клавиатуры
+    styles: {}
+  children: []
+- id: d9ada4dc-5519-4ed4-8970-5b1577769b17
+  type: run
+  props:
+    type: bash
+    name: Настроить переключение языка на CAPS LOCK
+    code: gsettings set org.gnome.desktop.input-sources xkb-options "['grp:caps_toggle']"
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 8a350100-75b5-4fb0-a456-1a0c98832c7d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

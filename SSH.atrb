@@ -1,0 +1,60 @@
+id: 01a024ef-31db-75b0-9f21-a531ae24abda
+name: SSH
+version: 1
+forkedFrom: null
+content:
+- id: 9b4917bf-c51e-4afc-9d3c-a8d2f7632a8d
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: SSH
+    styles: {}
+  children: []
+- id: 5e328cca-91c2-47bb-8176-7679ba1d8ebe
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Настроить Bitwarden как SSH agent
+    code: |-
+      cat <<EOF > ~/.ssh/config
+      Host *
+        IdentityAgent ~/.var/app/com.bitwarden.desktop/data/.bitwarden-ssh-agent.sock
+      EOF
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children:
+  - id: 8d7da8c4-68c9-437e-8daf-c53bf3496327
+    type: bulletListItem
+    props:
+      backgroundColor: default
+      textColor: default
+      textAlignment: left
+    content:
+    - type: text
+      text: Перед запуском скрипта необходимо установить через Flathub установить Bitwarden и запустить в нём ssh агент.
+      styles: {}
+    children: []
+- id: b746b0e9-aba2-415d-9197-37bceccac1b6
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

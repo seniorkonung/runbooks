@@ -1,0 +1,46 @@
+id: 01a024ee-5cd0-7923-badf-b4ca88aace8b
+name: Zed
+version: 1
+forkedFrom: null
+content:
+- id: 46457dd1-1639-4df4-80cf-e6d1108cfbef
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Zed
+    styles: {}
+  children: []
+- id: bcf2f524-8a29-435b-8d11-2862009f9245
+  type: run
+  props:
+    type: bash
+    name: Установка zed
+    code: curl -f https://zed.dev/install.sh | sh
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 70226618-2538-430a-8748-cc5fb715e521
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

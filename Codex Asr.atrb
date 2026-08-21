@@ -1,0 +1,86 @@
+id: 01a024ee-262a-7b90-849b-c742d8e39fd1
+name: Codex Asr
+version: 1
+forkedFrom: null
+content:
+- id: 17abf798-6a4e-4e0a-b905-07bde6296b9a
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Codex Asr
+    styles: {}
+  children: []
+- id: b4c1eaec-eac1-43d8-a4b5-a44248796fce
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content:
+  - type: text
+    text: Утилита использует аутентификацию codex, поэтому предварительно нужно установить и настроить codex.
+    styles: {}
+  children: []
+- id: f6230fa2-5b34-4d76-b213-97e0d923cb8d
+  type: run
+  props:
+    type: bash
+    name: Установка codex-asr
+    code: mise use -g codex-asr
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 2c728c38-b5dd-4b5f-907f-b9c1744b2380
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Регистрация и запуск автоматической службы
+    code: |-
+      mkdir -p ~/.config/systemd/user
+
+      cat > ~/.config/systemd/user/codex-asr.service <<'EOF'
+      [Unit]
+      Description=Run codex-asr server
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/bin/zsh -ic 'exec codex-asr serve --no-api-key --host 127.0.0.1 --port 8788 --concurrency 16'
+      Restart=always
+      RestartSec=3
+
+      [Install]
+      WantedBy=default.target
+      EOF
+
+      systemctl --user daemon-reload
+      systemctl --user enable --now codex-asr.service
+    outputVisible: false
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: c3c185fa-7a86-44b5-a3f9-8f4c89152ba5
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

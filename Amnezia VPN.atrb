@@ -1,0 +1,136 @@
+id: 01a024f0-6d68-7f11-9c81-320394d5bd85
+name: Amnezia VPN
+version: 1
+forkedFrom: null
+content:
+- id: 6fba0b43-3bc1-44a6-bec1-51e45b3152c6
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Amnezia VPN
+    styles: {}
+  children: []
+- id: b04e4868-ae63-4f55-8439-40bf483da95e
+  type: run
+  props:
+    type: bash
+    name: Установить системные зависимости необходимые для запуска и установки клиента
+    code: sudo apt install -y libxcb-icccm4 libxcb-keysyms1 libopengl0 libxcb-xinerama0 libxcb-cursor0 curl libxkbcommon-x11-0
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: f1a63406-9f37-41bd-9a14-e4eb7ba4fe03
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: version
+    name: Получить последнюю версию клиента
+    code: curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/amnezia-vpn/amnezia-client/releases/latest | sed 's#.*/##'
+    outputVisible: false
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: a3027585-7ef7-4803-87fb-78b07d6a75a9
+  type: var_display
+  props:
+    name: version
+  children: []
+- id: e3e94f3a-eb2f-40c3-aece-2993a9bcce70
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: tmp_dir
+    name: Создать временную директорию
+    code: mktemp -d -t amnezia-vpn.XXXXXX
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: de367572-bfd4-4914-87de-96e483845a98
+  type: var_display
+  props:
+    name: tmp_dir
+  children: []
+- id: 583586c3-7a0d-4bab-b1c5-7bf51b592b6d
+  type: var
+  props:
+    name: archive
+    value: '{{var.tmp_dir | trim}}/AmneziaVPN_{{var.version}}_linux_x64.tar'
+  children: []
+- id: 790d9c60-24ab-4868-93d0-284f37a10afb
+  type: var_display
+  props:
+    name: archive
+  children: []
+- id: d68e8351-a792-43e3-bbeb-5feb181f8f7b
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Скачать архив
+    code: |-
+      curl -fL -o "{{var.archive}}" \
+        https://github.com/amnezia-vpn/amnezia-client/releases/download/{{var.version}}/AmneziaVPN_{{var.version}}_linux_x64.tar
+    outputVisible: false
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 2e689021-b780-4c9b-bd19-f2d9327127d8
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Распаковать архив
+    code: tar -xf "{{var.archive}}" -C "{{var.tmp_dir | trim}}"
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: a8cee493-a615-4e14-a790-d2890802aefe
+  type: var
+  props:
+    name: bin
+    value: '{{var.tmp_dir | trim}}/AmneziaVPN_Linux_Installer.bin'
+  children: []
+- id: edcb2e1d-05f6-4d8f-a67e-f66da380e3a8
+  type: var_display
+  props:
+    name: bin
+  children: []
+- id: c6adac31-7f78-41be-a070-e9ff032ab0b8
+  type: run
+  props:
+    type: bash
+    name: Запустить установщик
+    code: chmod +x "{{var.bin}}" && sudo {{var.bin}}
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 9f258a90-86b1-489f-9e80-706bc5de6498
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

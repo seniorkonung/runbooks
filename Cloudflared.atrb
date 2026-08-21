@@ -1,0 +1,97 @@
+id: 01a024ed-7a8c-7832-a516-d0c6ff81ed24
+name: Cloudflared
+version: 1
+forkedFrom: null
+content:
+- id: 895a3e28-73c5-47fd-bba0-d117de17cd42
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Cloudflared
+    styles: {}
+  children: []
+- id: 166e9010-3572-45ed-af65-c195c6946886
+  type: run
+  props:
+    type: bash
+    name: Установка
+    code: mise use -g cloudflared
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 92284454-7d33-4fd9-8dfd-8249d69d1736
+  type: local-var
+  props:
+    name: tunnel_token
+    obscured: false
+  children: []
+- id: bf7f1f1b-214d-4a7f-b494-b7872b884007
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 222e99b6-410a-48fb-a19d-c813e268d8ed
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Регистрация и запуск автоматической службы
+    code: |-
+      mkdir -p ~/.config/systemd/user ~/.config/cloudflared
+
+      cat > ~/.config/cloudflared/tunnel.env <<'EOF'
+      TUNNEL_TOKEN={{var.tunnel_token}}
+      EOF
+      chmod 600 ~/.config/cloudflared/tunnel.env
+
+      cat > ~/.config/systemd/user/cloudflared.service <<'EOF'
+      [Unit]
+      Description=Cloudflare Tunnel user service
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=simple
+      EnvironmentFile=%h/.config/cloudflared/tunnel.env
+      ExecStart=%h/.local/bin/mise exec -- cloudflared --no-autoupdate tunnel run --token ${TUNNEL_TOKEN}
+      Restart=always
+      RestartSec=5
+
+      [Install]
+      WantedBy=default.target
+      EOF
+
+      systemctl --user daemon-reload
+      systemctl --user enable --now cloudflared.service
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: cd348f9b-1bf4-4295-84f7-fb660791ea75
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

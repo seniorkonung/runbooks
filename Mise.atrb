@@ -1,0 +1,68 @@
+id: 01a024ee-fbce-7b93-bbbd-b3007d5cc84b
+name: Mise
+version: 1
+forkedFrom: null
+content:
+- id: 1002e16c-1ad2-4c63-b4c4-ed714d4ad272
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Mise
+    styles: {}
+  children: []
+- id: 13b4bbde-3d75-4ec9-8cdf-813c4bedb3ef
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Скачать и установить mise
+    code: curl https://mise.run | sh
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: d68d38aa-aab0-4282-9a95-78a73e39e758
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Обновить .zshrc
+    code: echo 'eval "$(~/.local/bin/mise activate zsh)"' >> ~/.zshrc
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: f8acb874-a7b2-42e2-83f4-0efdc8e33f35
+  type: run
+  props:
+    type: bash
+    name: Установить утилиту усиливающую автоподсказки
+    code: mise use -g usage
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 724afcea-b715-4be9-890c-cf9465c42ce2
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

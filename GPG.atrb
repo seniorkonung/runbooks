@@ -1,0 +1,96 @@
+id: 01a024ef-5b09-7d60-98ab-b4b157ddb33e
+name: GPG
+version: 1
+forkedFrom: null
+content:
+- id: 0839f06e-a7b6-4ff1-b655-1e58ec2fb693
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: GPG
+    styles: {}
+  children: []
+- id: 4f31dfb6-c461-497d-9914-27c8b9e5f4d6
+  type: env
+  props:
+    name: GPGID
+    value: 425C78F2BA2BBAA7
+  children: []
+- id: 46ba4768-4f02-4038-b619-7bccda0d81ed
+  type: run
+  props:
+    type: bash
+    name: Получение GPG Private Key
+    code: |-
+      echo "gpg_private_key<<EOF" >> $ATUIN_OUTPUT_VARS \
+        && cat >> $ATUIN_OUTPUT_VARS \
+        && echo "EOF" >> $ATUIN_OUTPUT_VARS \
+        && exit
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children:
+  - id: c704d0a0-d91d-4298-a344-86250d6f3ba6
+    type: bulletListItem
+    props:
+      backgroundColor: default
+      textColor: default
+      textAlignment: left
+    content:
+    - type: text
+      text: Корректно и без прерываний закончить ввод можно с помощью Ctrl + D
+      styles: {}
+    children: []
+- id: 79a8bdd3-9b29-40ba-ba1c-e3bac195f3ff
+  type: env
+  props:
+    name: GPG_PRIVATE_KEY
+    value: '{{var.gpg_private_key}}'
+  children: []
+- id: 52ae96f0-18f8-4dc9-8253-ea7b78ea10d4
+  type: run
+  props:
+    type: bash
+    name: Импортировать GPG ключ и настроить уровень его доверия
+    code: echo $GPG_PRIVATE_KEY | gpg --import && gpg --command-fd 0 --edit-key $GPGID
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children:
+  - id: 63e35c5b-1da1-4138-9be3-b6103316a2ae
+    type: paragraph
+    props:
+      backgroundColor: default
+      textColor: default
+      textAlignment: left
+    content:
+    - type: text
+      text: 'Подсказка к паролю: продуктивно'
+      styles: {}
+    children: []
+- id: 3438b7c1-8004-40a3-846a-017f9901dc05
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

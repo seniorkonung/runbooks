@@ -1,0 +1,79 @@
+id: 01a024ef-b9cb-7c82-84fd-537ef75a9090
+name: Git
+version: 1
+forkedFrom: null
+content:
+- id: d784cc37-43f1-4f51-9d20-1d81a9af3d6d
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Git
+    styles: {}
+  children: []
+- id: b534f0fc-906d-4966-9f99-6b620bfbba3e
+  type: env
+  props:
+    name: EMAIL
+    value: senior.konung@gmail.com
+  children: []
+- id: e4754f98-375a-4d89-9e9b-8682aa3ab642
+  type: env
+  props:
+    name: FULLNAME
+    value: Valentin Panchenko
+  children: []
+- id: e3ad875f-dc61-447c-8ffd-1b42ad7353c0
+  type: env
+  props:
+    name: GPGID
+    value: 425C78F2BA2BBAA7
+  children: []
+- id: 3c88b06c-9f0d-424c-8d50-b01ab9f18642
+  type: run
+  props:
+    type: bash
+    name: Установить Git
+    code: sudo apt install -y git
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 0a1b95ec-f642-4585-8954-17ca14b73697
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Настроить Git
+    code: |-
+      git config --global "user.name" "$FULLNAME" \
+        && git config --global "user.email" "$EMAIL" \
+        && git config --global "user.signingkey" "$GPGID" \
+        && git config --global commit.gpgsign true
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 1e4d0579-4ab5-488e-883a-784a0ac1a10a
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

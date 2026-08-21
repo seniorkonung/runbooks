@@ -1,0 +1,198 @@
+id: 01a024ee-86dc-7750-a409-32b49644d0ba
+name: Android Studio
+version: 1
+forkedFrom: null
+content:
+- id: c2536eb1-823f-4084-bfd6-c522a0d43625
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Android Studio
+    styles: {}
+  children: []
+- id: 7a03b3f4-0374-4f60-9acd-2fa101fefe66
+  type: run
+  props:
+    type: bash
+    name: Установка зависимостей
+    code: |-
+      sudo dpkg --add-architecture i386 \
+        && sudo apt update -y \
+        && sudo apt upgrade -y \
+        && sudo apt-get install -y libc6:i386 libncurses6:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: ff47fd2a-d0d9-471b-ae84-39ca35918751
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content:
+  - type: text
+    text: 'Далее по '
+    styles: {}
+  - type: link
+    href: https://developer.android.com/studio?hl=ru
+    content:
+    - type: text
+      text: ссылке
+      styles: {}
+  - type: text
+    text: ' нужно скачать саму android studio в виде архива. В архиве будет папка android-studio, которую нужно переместить в '
+    styles: {}
+  - type: text
+    text: ~/AppImages
+    styles:
+      italic: true
+  children: []
+- id: c9a713c3-061a-4124-8cc2-1743e871ca66
+  type: run
+  props:
+    type: bash
+    name: Запуск Android Studio
+    code: ~/AppImages/android-studio/bin/studio.sh
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children:
+  - id: 63f14425-a737-4ad9-a247-5a95cec260fa
+    type: bulletListItem
+    props:
+      backgroundColor: default
+      textColor: default
+      textAlignment: left
+    content:
+    - type: text
+      text: В запущенной студии нужно завершить докачку всех компонентов.
+      styles: {}
+    children: []
+  - id: ae67caf4-01d4-414c-883c-29aa8d082460
+    type: bulletListItem
+    props:
+      backgroundColor: default
+      textColor: default
+      textAlignment: left
+    content:
+    - type: text
+      text: 'Последним этапом необходимо установить ярлык через '
+      styles: {}
+    - type: text
+      text: Tools -> Create Desktop Entry
+      styles:
+        bold: true
+    - type: text
+      text: ' (для этого нужно открыть какой-то проект, а не в приветственном меню).'
+      styles: {}
+    children: []
+- id: 3ab65901-2d2c-473c-b52d-b1d65f02a6f3
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Сделать adb утилиту доступной для вызова вручную
+    code: ln -s ~/Android/Sdk/platform-tools/adb ~/.local/bin/
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: a0fd796d-fbba-4ded-bc2b-d45673c30331
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: Flutter
+    styles: {}
+  children: []
+- id: a125641f-c8df-48b3-8ea8-67cab24673ee
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content:
+  - type: text
+    text: 'Для '
+    styles: {}
+  - type: text
+    text: flutter
+    styles:
+      bold: true
+  - type: text
+    text: ' дальнейшая инструкция '
+    styles: {}
+  - type: link
+    href: https://docs.flutter.dev/platform-integration/android/setup
+    content:
+    - type: text
+      text: тут
+      styles: {}
+  - type: text
+    text: .
+    styles: {}
+  children: []
+- id: 76c6f692-eab0-4453-84d1-8d3b4c7cca2e
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: React Native
+    styles: {}
+  children: []
+- id: 4702def8-c2c6-443d-a3c1-54cf54984320
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content:
+  - type: text
+    text: 'Для '
+    styles: {}
+  - type: text
+    text: react native
+    styles:
+      bold: true
+  - type: text
+    text: ' дальнейшая инструкция '
+    styles: {}
+  - type: link
+    href: https://docs.expo.dev/get-started/set-up-your-environment/?mode=development-build&buildEnv=local
+    content:
+    - type: text
+      text: тут
+      styles: {}
+  - type: text
+    text: .
+    styles: {}
+  children: []
+- id: 375e3d90-b6c4-4f9d-8904-d20476100814
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

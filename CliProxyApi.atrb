@@ -1,0 +1,202 @@
+id: 01a024ed-e4ba-7073-95ef-d5f8d4aace05
+name: CliProxyApi
+version: 1
+forkedFrom: null
+content:
+- id: d1eac1f9-f1fd-4dce-8ac3-4cb14c94225a
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: CliProxyApi
+    styles: {}
+  children: []
+- id: cb447b7d-455a-47dd-9921-4eb86ddb909b
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: version
+    name: Получить последнюю версию клиента
+    code: curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/router-for-me/CLIProxyAPI/releases/latest | sed 's#.*/##'
+    outputVisible: false
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 97f2a67d-486a-419a-8cd8-b068dc2dbcee
+  type: var_display
+  props:
+    name: version
+  children: []
+- id: de6d10e2-b61d-4b27-9d30-f8f44059616e
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: tmp_dir
+    name: Создать временную директорию
+    code: mktemp -d -t cliproxyapi.XXXXXX
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: d96f3e96-5a70-4469-bb3a-e1c408673391
+  type: var_display
+  props:
+    name: tmp_dir
+  children: []
+- id: 468ffc84-0586-442f-83de-6b64d8f63a54
+  type: var
+  props:
+    name: archive
+    value: '{{var.tmp_dir | trim}}/CLIProxyAPI_{{var.version}}_linux_amd64.tar.gz'
+  children: []
+- id: ebc1ba69-321e-4228-9fa0-8bffc1ccc781
+  type: var_display
+  props:
+    name: archive
+  children: []
+- id: 1f827dea-00b0-4238-b02c-ce4a27d309e6
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Скачать архив
+    code: |-
+      curl -fL -o "{{var.archive}}" \
+        https://github.com/router-for-me/CLIProxyAPI/releases/download/{{var.version}}/CLIProxyAPI_{{var.version[1:]}}_linux_amd64.tar.gz
+    outputVisible: false
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 37220d26-07ff-4a7a-b493-16279866ca68
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Распаковать архив
+    code: tar -xf "{{var.archive}}" -C "{{var.tmp_dir | trim}}"
+    outputVisible: false
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 03620ab3-a34b-403b-82ae-d42b04605b03
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Переместить исполняемый файл
+    code: cp {{var.tmp_dir | trim}}/cli-proxy-api ~/.local/bin/
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 39d764e2-3c65-4d10-bb66-5b14d4ead54e
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Создать конфигурацию
+    code: |-
+      mkdir -p ~/.cli-proxy-api
+
+      cat > ~/.cli-proxy-api/config.yaml <<'EOF'
+      host: "127.0.0.1"
+      port: 8317
+
+      auth-dir: "~/.cli-proxy-api"
+
+      api-keys:
+        - "12345"
+
+      remote-management:
+        allow-remote: false
+        secret-key: ""
+
+      debug: false
+      logging-to-file: false
+      usage-statistics-enabled: false
+
+      proxy-url: ""
+
+      request-retry: 3
+      max-retry-interval: 30
+
+      streaming:
+        keepalive-seconds: 15
+        bootstrap-retries: 1
+
+      codex-instructions-enabled: false
+      EOF
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 8737881b-4f96-43af-8ba5-1684dcde70d6
+  type: run
+  props:
+    type: bash
+    name: Авторизоваться по codex flow
+    code: cli-proxy-api -config ~/.cli-proxy-api/config.yaml -codex-login
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 2fd63e6d-552e-4627-be4f-019f576da92a
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Регистрация и запуск автоматической службы
+    code: |-
+      mkdir -p ~/.config/systemd/user
+
+      cat > ~/.config/systemd/user/cli-proxy-api.service <<'EOF'
+      [Unit]
+      Description=Run cli-proxy-api server
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/bin/zsh -ic 'exec cli-proxy-api -config ~/.cli-proxy-api/config.yaml'
+      Restart=always
+      RestartSec=3
+
+      [Install]
+      WantedBy=default.target
+      EOF
+
+      systemctl --user daemon-reload
+      systemctl --user enable --now cli-proxy-api.service
+    outputVisible: false
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: b293b977-46a2-4535-ba41-d06dab4c15b1
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: ccd946fe-2a90-43d7-9c71-a26318d504ca
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

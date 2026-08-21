@@ -1,0 +1,164 @@
+id: 01a024ee-bbf4-78e2-9deb-0552caec712b
+name: Docker
+version: 1
+forkedFrom: null
+content:
+- id: f8240506-209d-46c9-9da4-4a6e94051405
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Docker
+    styles: {}
+  children: []
+- id: 27335d20-9367-4fa8-95fa-da8d2e63a6df
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: Установить репозитории
+    styles: {}
+  children: []
+- id: 7f40aa52-c95c-49b7-ac25-ead713cf26ee
+  type: run
+  props:
+    type: bash
+    name: Шаг 1
+    code: sudo apt -y update && sudo apt install -y ca-certificates curl
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 3aca3909-43bc-4363-8684-65945a21de27
+  type: run
+  props:
+    type: bash
+    name: Шаг 2
+    code: sudo install -m 0755 -d /etc/apt/keyrings
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 860e0549-e83a-413a-aa4d-1af2b04594ba
+  type: run
+  props:
+    type: bash
+    name: Шаг 3
+    code: sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 02992176-924c-4954-9381-89d487b24cdf
+  type: run
+  props:
+    type: bash
+    name: Шаг 4
+    code: sudo chmod a+r /etc/apt/keyrings/docker.asc
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 92d2e2d0-dffd-4f9d-b70f-9b9220c21995
+  type: run
+  props:
+    type: bash
+    name: Шаг 5
+    code: |-
+      sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+      Types: deb
+      URIs: https://download.docker.com/linux/ubuntu
+      Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+      Components: stable
+      Architectures: $(dpkg --print-architecture)
+      Signed-By: /etc/apt/keyrings/docker.asc
+      EOF
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: d068090c-a6f1-49f5-a17c-84407e9504d6
+  type: run
+  props:
+    type: bash
+    name: Шаг 6
+    code: sudo apt -y update
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 77d77b5d-1577-431e-b8c4-3b3429883b72
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: Установить докер
+    styles: {}
+  children: []
+- id: bc4a5e4d-141f-4a1b-9c31-5c38922793dd
+  type: run
+  props:
+    type: bash
+    name: Шаг 1
+    code: sudo apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: f8734d33-2579-4035-8378-e4aed46ba3e3
+  type: run
+  props:
+    type: bash
+    name: Шаг 2
+    code: sudo systemctl start docker
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: ca4738d9-0f78-49d0-9ef0-ff9de97d455e
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
