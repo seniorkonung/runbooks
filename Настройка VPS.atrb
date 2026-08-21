@@ -1,0 +1,348 @@
+id: 01a024fa-603a-7302-a0ce-d9d637d505d2
+name: Настройка VPS
+version: 1
+forkedFrom: null
+content:
+- id: f6596d68-4414-48f3-b502-eb54c9a00b17
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Настройка VPS
+    styles: {}
+  children: []
+- id: fe9fb391-0f59-47c0-86ba-97825828268b
+  type: ssh-connect
+  props:
+    userHost: root@
+    user: root
+    hostname: 151.242.191.59
+    port: 0
+  children: []
+- id: b2763fbe-b13c-4941-8936-a55d87f9b72c
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: Mise
+    styles: {}
+  children: []
+- id: 8a5252e8-4660-447a-8044-0b75ebd28dc7
+  type: script
+  props:
+    interpreter: bash
+    outputVariable: ''
+    name: Скачать и установить mise
+    code: curl https://mise.run | sh
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: e2d26a47-436d-43ff-948e-4b95c258eaff
+  type: script
+  props:
+    interpreter: bash
+    outputVariable: ''
+    name: Обновить .bashrc
+    code: |-
+      echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+      echo 'eval "$(mise activate bash)"' >> ~/.bashrc
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: c7395ac7-bba4-4115-9af1-3570ef6d672a
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: Зависимости
+    styles: {}
+  children: []
+- id: 0565a148-4239-4cc8-8269-2709626f38e6
+  type: script
+  props:
+    interpreter: bash
+    outputVariable: ''
+    name: Установка всех зависимостей поочерёдная
+    code: |-
+      export PATH="/root/.local/bin:$PATH"
+      mise use -g rust codex cloudflared
+      mise use -g cargo:codex-asr
+      mise use -g node
+      mise use -g npm:@getpaseo/cli
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 16
+  children: []
+- id: d158d8c7-3aa6-4dc8-b31b-bb2be3831e7d
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: Codex
+    styles: {}
+  children: []
+- id: e3abe66c-d629-4c2e-a8ed-a3ed811bd43f
+  type: run
+  props:
+    type: bash
+    name: Авторизовать codex
+    code: codex login --device-auth
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 1cfdfbf9-872c-4e1b-8cd5-fa6b1223db44
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 0ac0667e-00b9-4d32-8c2d-73e217dc89eb
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: Codex ASR
+    styles: {}
+  children: []
+- id: cc939963-d58b-4db3-b8af-4f2b93c6f8f2
+  type: local-var
+  props:
+    name: codex_asr_token
+    obscured: false
+  children: []
+- id: 2f3ec2c8-0fd1-4b57-a8a0-379123475b09
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: b99dc036-c417-4ca8-8745-2d7fbf4b3a8e
+  type: script
+  props:
+    interpreter: bash
+    outputVariable: ''
+    name: Настройка codex-asr
+    code: |-
+      mkdir -p /root/.config/codex-asr
+
+      cat > /root/.config/codex-asr/token.env <<'EOF'
+      CODEX_ASR_TOKEN={{var.codex_asr_token}}
+      EOF
+      chmod 600 /root/.config/codex-asr/token.env
+
+      cat > /etc/systemd/system/codex-asr.service <<'EOF'
+      [Unit]
+      Description=Run codex-asr server
+
+      [Service]
+      Type=simple
+      User=root
+      EnvironmentFile=/root/.config/codex-asr/token.env
+      ExecStart=/root/.local/bin/mise exec -- codex-asr serve --api-key ${CODEX_ASR_TOKEN} --host 127.0.0.1 --port 8788 --concurrency 16
+      Restart=always
+      RestartSec=3
+
+      [Install]
+      WantedBy=default.target
+      EOF
+
+      systemctl daemon-reload
+      systemctl enable --now codex-asr.service
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 8b9b4c52-fce3-4a5c-b948-bde5bd462fcd
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: Cloudflare
+    styles: {}
+  children: []
+- id: aa7fd466-acaa-4aab-9d94-3da92812b305
+  type: local-var
+  props:
+    name: tunnel_token
+    obscured: false
+  children: []
+- id: 474e9086-4cb9-4b19-ab8a-c8f4038cf18f
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: c3367c49-fa12-4534-84af-a2bbfd3fad2a
+  type: script
+  props:
+    interpreter: bash
+    outputVariable: ''
+    name: Регистрация и запуск автоматической службы cloudflare
+    code: |-
+      mkdir -p /root/.config/cloudflared
+
+      cat > /root/.config/cloudflared/tunnel.env <<'EOF'
+      TUNNEL_TOKEN={{var.tunnel_token}}
+      EOF
+      chmod 600 /root/.config/cloudflared/tunnel.env
+
+      cat > /etc/systemd/system/cloudflared.service <<'EOF'
+      [Unit]
+      Description=Cloudflare Tunnel user service
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=simple
+      User=root
+      EnvironmentFile=/root/.config/cloudflared/tunnel.env
+      ExecStart=/root/.local/bin/mise exec -- cloudflared --no-autoupdate tunnel run --token ${TUNNEL_TOKEN}
+      Restart=always
+      RestartSec=5
+
+      [Install]
+      WantedBy=default.target
+      EOF
+
+      systemctl daemon-reload
+      systemctl enable --now cloudflared.service
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 7f653b05-9295-4c9c-bec6-24771c11924c
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 2
+    isToggleable: false
+  content:
+  - type: text
+    text: Paseo
+    styles: {}
+  children: []
+- id: fa00c1a4-9a85-4963-a1d5-e87ba62459e5
+  type: local-var
+  props:
+    name: paseo_password
+    obscured: false
+  children: []
+- id: 50eb0531-b589-4460-bbd0-7fed81c56db3
+  type: env
+  props:
+    name: PASEO_HOSTNAMES
+    value: paseo.seniorkonung.uk
+  children: []
+- id: 5b708786-6136-4f98-a99c-42425daf866e
+  type: script
+  props:
+    interpreter: bash
+    outputVariable: ''
+    name: Регистрация и запуск автоматической службы paseo
+    code: |-
+      mkdir -p /root/.config/paseo /root/.paseo
+
+      cat > /root/.config/paseo/credentials.env <<'EOF'
+      PASEO_PASSWORD={{var.paseo_password}}
+      EOF
+      chmod 600 /root/.config/paseo/credentials.env
+
+      cat > /root/.paseo/config.json <<'EOF'
+      {
+        "$schema": "https://paseo.sh/schemas/paseo.config.v1.json",
+        "version": 1,
+        "daemon": {
+          "listen": "127.0.0.1:6767",
+          "hostnames": [
+            "paseo.seniorkonung.uk"
+          ],
+          "relay": {
+            "enabled": false
+          }
+        },
+        "features": {
+          "dictation": {
+            "enabled": false
+          },
+          "voiceMode": {
+            "enabled": false
+          }
+        }
+      }
+      EOF
+
+      cat > /etc/systemd/system/paseo.service <<'EOF'
+      [Unit]
+      Description=Paseo Daemon
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=simple
+      User=root
+      EnvironmentFile=/root/.config/paseo/credentials.env
+      ExecStart=/root/.local/bin/mise exec -- paseo daemon start --foreground
+      Restart=always
+      RestartSec=5
+
+      [Install]
+      WantedBy=default.target
+      EOF
+
+      systemctl daemon-reload
+      systemctl enable --now paseo.service
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: cd946e10-45bb-4748-b58e-330758fb9e65
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

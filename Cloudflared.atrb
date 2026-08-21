@@ -87,11 +87,3 @@ content:
     textAlignment: left
   content: []
   children: []
-- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
-  type: paragraph
-  props:
-    backgroundColor: default
-    textColor: default
-    textAlignment: left
-  content: []
-  children: []
