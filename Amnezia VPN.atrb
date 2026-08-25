@@ -63,55 +63,33 @@ content:
 - id: 583586c3-7a0d-4bab-b1c5-7bf51b592b6d
   type: var
   props:
-    name: archive
-    value: '{{var.tmp_dir | trim}}/AmneziaVPN_{{var.version}}_linux_x64.tar'
+    name: installer
+    value: '{{var.tmp_dir | trim}}/AmneziaVPN_{{var.version}}_linux_x64.run'
   children: []
 - id: 790d9c60-24ab-4868-93d0-284f37a10afb
   type: var_display
   props:
-    name: archive
+    name: installer
   children: []
 - id: d68e8351-a792-43e3-bbeb-5feb181f8f7b
   type: script
   props:
     interpreter: /usr/bin/zsh
     outputVariable: ''
-    name: Скачать архив
+    name: Скачать установщик
     code: |-
-      curl -fL -o "{{var.archive}}" \
-        https://github.com/amnezia-vpn/amnezia-client/releases/download/{{var.version}}/AmneziaVPN_{{var.version}}_linux_x64.tar
+      curl -fL -o "{{var.installer}}" \
+        https://github.com/amnezia-vpn/amnezia-client/releases/download/{{var.version}}/AmneziaVPN_{{var.version}}_linux_x64.run
     outputVisible: false
     dependency: '{}'
     terminalRows: 12
-  children: []
-- id: 2e689021-b780-4c9b-bd19-f2d9327127d8
-  type: script
-  props:
-    interpreter: /usr/bin/zsh
-    outputVariable: ''
-    name: Распаковать архив
-    code: tar -xf "{{var.archive}}" -C "{{var.tmp_dir | trim}}"
-    outputVisible: true
-    dependency: '{}'
-    terminalRows: 12
-  children: []
-- id: a8cee493-a615-4e14-a790-d2890802aefe
-  type: var
-  props:
-    name: bin
-    value: '{{var.tmp_dir | trim}}/AmneziaVPN_Linux_Installer.bin'
-  children: []
-- id: edcb2e1d-05f6-4d8f-a67e-f66da380e3a8
-  type: var_display
-  props:
-    name: bin
   children: []
 - id: c6adac31-7f78-41be-a070-e9ff032ab0b8
   type: run
   props:
     type: bash
     name: Запустить установщик
-    code: chmod +x "{{var.bin}}" && sudo {{var.bin}}
+    code: chmod +x "{{var.installer}}" && {{var.installer}}
     pty: ''
     global: false
     outputVisible: true
