@@ -1,0 +1,73 @@
+id: 01a03974-dcf5-7623-871b-9902a02e8dec
+name: Navi
+version: 1
+forkedFrom: null
+content:
+- id: f6596d68-4414-48f3-b502-eb54c9a00b17
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Navi
+    styles: {}
+  children: []
+- id: b2caf63c-ac84-4a3a-a37d-8b3d67ccef8a
+  type: run
+  props:
+    type: bash
+    name: Установка navi
+    code: sudo apt install fzf && mise use -g github:denisidoro/navi
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: ea2811f5-f5ba-4fbd-b0b9-d25119521201
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: 69937f48-280e-4b89-8866-bc0b0dc77d65
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Настройка navi
+    code: |-
+      [ -d $HOME/projects/cheats/.git ] || git clone git@github.com:seniorkonung/cheats.git
+
+      mkdir -p ~/.config/navi
+      cat > ~/.config/navi/config.yaml <<'EOF'
+      cheats:
+        paths:
+          - ~/projects/cheats
+      EOF
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: f094bf6b-c157-40af-93b6-24027141ef0a
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []

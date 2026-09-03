@@ -1,0 +1,117 @@
+id: 01a068be-23ca-7b80-97be-a8e1098c89aa
+name: Multica
+version: 1
+forkedFrom: null
+content:
+- id: f6596d68-4414-48f3-b502-eb54c9a00b17
+  type: heading
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+    level: 1
+    isToggleable: false
+  content:
+  - type: text
+    text: Multica
+    styles: {}
+  children: []
+- id: a30c42e4-a6ec-4048-bc7f-573797bb6c8f
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: version
+    name: Получить последнюю версию
+    code: curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/multica-ai/multica/releases/latest | sed 's#.*/##'
+    outputVisible: false
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: 6b7fda7c-a316-45d6-9281-542cd11ffb1a
+  type: var_display
+  props:
+    name: version
+  children: []
+- id: 1727f6a6-e8a6-4f12-b5a2-1e8026107e95
+  type: env
+  props:
+    name: BACKEND_PORT
+    value: '5757'
+  children: []
+- id: 60b0e3fd-daf1-42ad-a0a7-167f1c51835b
+  type: env
+  props:
+    name: FRONTEND_PORT
+    value: '5959'
+  children: []
+- id: eb3a5169-fc9f-4587-9e29-36e1baa39c47
+  type: script
+  props:
+    interpreter: /usr/bin/zsh
+    outputVariable: ''
+    name: Скачать веб версию
+    code: "mkdir -p ~/apps\ncd ~/apps\n[ -d $HOME/apps/multica/.git ] || git clone --branch {{ var.version }} --depth 1 https://github.com/multica-ai/multica.git multica\ncd multica\n\nif [[ ! -f \".env\" ]]; then\n  cp .env.example .env\n\n  JWT_SECRET=$(openssl rand -hex 32)\n  MULTICA_IMAGE_TAG=\"{{ var.version }}\"\n  \n  JWT_SECRET=\"$JWT_SECRET\" \\\n  PORT=\"$BACKEND_PORT\" \\\n  FRONTEND_PORT=\"$FRONTEND_PORT\" \\\n  MULTICA_IMAGE_TAG=\"$MULTICA_IMAGE_TAG\" \\\n  AUTH_TOKEN_TTL=\"8760h\" \\\n  APP_ENV=\"production\" \\\n  awk '\n    /^[[:space:]]*JWT_SECRET[[:space:]]*=/ {\n      print \"JWT_SECRET=\" ENVIRON[\"JWT_SECRET\"]\n      next\n    }\n    /^[[:space:]]*PORT[[:space:]]*=/ {\n      print \"PORT=\" ENVIRON[\"PORT\"]\n      next\n    }\n    /^[[:space:]]*FRONTEND_PORT[[:space:]]*=/ {\n      print \"FRONTEND_PORT=\" ENVIRON[\"FRONTEND_PORT\"]\n      next\n    }\n    /^[[:space:]]*MULTICA_IMAGE_TAG[[:space:]]*=/ {\n      print \"MULTICA_IMAGE_TAG=\" ENVIRON[\"MULTICA_IMAGE_TAG\"]\n      next\n    }\n    /^[[:space:]]*APP_ENV[[:space:]]*=/ {\n      print \"APP_ENV=\" ENVIRON[\"APP_ENV\"]\n      next\n    }\n    /^#?[[:space:]]*AUTH_TOKEN_TTL[[:space:]]*=/ {\n      print \"AUTH_TOKEN_TTL=\" ENVIRON[\"AUTH_TOKEN_TTL\"]\n      next\n    }\n    { print }\n  ' .env > .env.tmp && cat .env.tmp > .env && rm .env.tmp\nfi"
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 12
+  children: []
+- id: bb68a617-089d-4f3a-a71b-e1768b455e1d
+  type: run
+  props:
+    type: bash
+    name: Запустить docker compose
+    code: cd ~/apps/multica && sudo docker compose -f docker-compose.selfhost.yml up -d
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 00cfbecc-b5ae-4251-8caf-c41bee0c70c9
+  type: run
+  props:
+    type: bash
+    name: Получить код якобы почты после авторизации
+    code: |-
+      export CODE="$(
+        sudo docker compose -f $HOME/apps/multica/docker-compose.selfhost.yml logs backend |
+        grep "Verification code for" |
+        tail -1 |
+        sed -E 's/.*: ([0-9]{6}).*/\1/'
+      )" && echo "Код: $CODE"
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: a648f6f2-b6f7-4cec-b3ce-1a983d1bf93b
+  type: run
+  props:
+    type: bash
+    name: Установить cli рантайм и авторизовать его (попросит авторизацию в браузере)
+    code: |-
+      mise use -g github:multica-ai/multica \
+        && multica setup self-host --server-url http://localhost:{{ env.BACKEND_PORT }} --app-url http://localhost:{{ env.FRONTEND_PORT }}
+    pty: ''
+    global: false
+    outputVisible: true
+    dependency: '{}'
+    terminalRows: 20
+  children: []
+- id: 30bd3f34-0288-43fe-9045-c58b71305e9d
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
+- id: c2153306-fc79-4faf-a643-4fa8c7906ace
+  type: paragraph
+  props:
+    backgroundColor: default
+    textColor: default
+    textAlignment: left
+  content: []
+  children: []
